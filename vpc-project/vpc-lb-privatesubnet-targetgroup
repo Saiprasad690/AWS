@@ -1,0 +1,34 @@
+First create a vpc without s3gateway
+Create a auto-scaling group by creating a lanunch template
+--Go with default configurations and in security group dont include subnet info and create a new SG 
+--Inbound Security Group Rules add a new SSH number and also add application port number
+Choose the launch template
+--In network configurations choose the vpc and 2 private subnets--Next
+No load balancer configurations for the private subnet (only for this project) --next
+Give the desired capacity instances --Next--create a auto scaling group
+Verify the 2 instances created or not in their respective availability zones.
+------------Now Bastion or jump server-----------------
+Because those 2 instances doesnt have any public IP address so create a new instance normally within same VPC and choose public subnet and also enable IP for (ssh cmd)
+------------------
+Now bastion instance have copy the key value pair cause how bastion will connect to those 2 instances 
+---------------------command to copy the key value pair file-------------------
+scp -i \Users\jupal\Downloads\aws-login.pem \Users\jupal\Downloads\aws-login.pem ubuntu@3.237.64.151:/home/ubuntu
+Now ssh -i aws-login.pem ubuntu@Public ip of bastion and do ls. The key value pair should be found
+----------------------------------------------------------------------------------------------
+Now with bastion instance we need to connect to other instance for application to run in the instance which is private subnet (can we also run another app in 2 private instance also)
+----ssh -i aws-login.pem ubuntu@private of ip of the instance which is in private subnet
+-----change the permission for aws-login.pem by chmod 600 aws-login.pem and try again------
+Now install basic app like vim a file and (browse from w3 school and choose a basic one) and run python3 -m http.server 8000
+---------Now a app is runnning in one private instance--------------
+Lets create a load balancer and attach the 2 private subnet instances as target group
+Create a app load balancer which does Layer7 LB for HTTP and HTTPS
+Load balancer should have internet facing as we place it in the public subnet as per this project
+---choose vpc and select public subnet in both of the zones cause we're placing the LB in public subnets
+Choose a new security group it has 8000 port open in it or also create a new SG if required
+  --Now create a target group--name the target group---http app port 8000---next---choose the private subnet instances----include as pending below-----create target group
+Now add this target group to the load balancer and Http 80 because for that SG the load balance should run port 80----create the load balancer
+check any port error if yes go to SG and add that port number and good to go
+
+------------------------pick up Load balancer Ip and hit in the new browser---------------------------------DONE.
+  
+      
